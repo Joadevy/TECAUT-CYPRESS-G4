@@ -1,17 +1,18 @@
 /// <reference types="cypress" />
 // import { MailSlurp } from "mailslurp-client";
 
-let value = undefined;
+let value = "";
 // const TO = Cypress.env("TO");
 // const API_KEY = Cypress.env("API_KEY");
 // const mailslurp = new MailSlurp({apiKey:API_KEY});
 // const from = Cypress.env("FROM");
+const URL = Cypress.env("url");
 
-context('Actions', () => {
-    it("Open Nasdaq", ()=>
-    {
-        // cy.log(MailSlurp);
-        cy.visit('https://spacegamer.com.ar/169606-notebooks-gigabyte-notebook-g5-i5-11400h-rtx-3050-ti-16g-512ssd-144hz-w111');
+context('Acciones', () => {
+    it("Visitar pagina", ()=>
+        {
+        cy.log(URL);
+        cy.visit(URL);
         
         cy.get('[class^="stockDetalle"]')
             .find('span')  
