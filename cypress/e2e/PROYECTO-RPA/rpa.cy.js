@@ -37,15 +37,21 @@ context('Acciones', () => {
     //     });
     // });
 
-    it("Email value", ()=>
+    it("Enviar mensaje telegram", ()=>
     {
         cy.log(value);
-        // await mailslurp.sendEmail(from,
-        //     {
-        //         to:[TO],
-        //         subject:'0.5% kurs ' + value,
-        //         body:value
-        //     }
-        // ); 
+        cy.request({
+            method: 'POST',
+            url: 'https://api.telegram.org/bot'+Cypress.env("BOT")+'/sendMessage',
+            form: true,
+            body: {
+                chat_id: Cypress.env("CHAT_ID"),
+                text: `Hola, el producto esta en estado: ${value}`
+            }
+        }).then((response) => {
+            expect(response.status).to.eq(200);
+            expect(response.body.ok).to.eq(true);
+        }
+        );
     });
 });
