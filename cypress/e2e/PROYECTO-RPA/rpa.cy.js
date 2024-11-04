@@ -1,16 +1,15 @@
 /// <reference types="cypress" />
-// import { MailSlurp } from "mailslurp-client";
 
-let value = "";
-// const TO = Cypress.env("TO");
-// const API_KEY = Cypress.env("API_KEY");
-// const mailslurp = new MailSlurp({apiKey:API_KEY});
-// const from = Cypress.env("FROM");
+let availability = "";
+let actualPrice = 0;
+let lastPrice = 0;
 const URL = Cypress.env("url");
 
 context('Acciones', () => {
     it("Visitar pagina", ()=>
         {
+        lastPrice = cy.readFile('cypress/e2e/PROYECTO-RPA/datos.json');
+        cy.log(lastPrice);
         cy.log(URL);
         cy.visit(URL);
         
@@ -18,40 +17,38 @@ context('Acciones', () => {
             .find('span')  
             .invoke('text')        
             .then((text) => {
-                value = text;
+                availability = text.trim();
                 cy.log(text);            
                 
                 expect(text.trim()).to.eq('DISPONIBLE');
             });
-    });
 
-    // it("Find value", ()=>
-    // {
-    //     cy.get(".product-details__info__additional__item__title").should((e)=>
-    //     {
-    //         if (e != null)
-    //         {
-    //             value = e.first().text();
-    //             value.should("Stock disponible");
-    //         }
-    //     });
-    // });
+            cy.get('div.product__prices > span.product-card__new-price')
+            .invoke('text')
+            .then((text) => {
+                const numericPrice = parseInt(text.trim().replace(/[^0-9]/g, ''), 10);
+                const date = new Date();
+                const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+                cy.writeFile('cypress/e2e/PROYECTO-RPA/datos.json', { lastPrice: numericPrice, availability: availability, url: URL, date: formattedDate });
+            });
+
+    });
 
     it("Enviar mensaje telegram", ()=>
     {
-        cy.log(value);
-        cy.request({
-            method: 'POST',
-            url: 'https://api.telegram.org/bot'+Cypress.env("BOT")+'/sendMessage',
-            form: true,
-            body: {
-                chat_id: Cypress.env("CHAT_ID"),
-                text: `Hola, el producto esta en estado: ${value}`
-            }
-        }).then((response) => {
-            expect(response.status).to.eq(200);
-            expect(response.body.ok).to.eq(true);
-        }
-        );
+        cy.log(availability);
+        // cy.request({
+        //     method: 'POST',
+        //     url: 'https://api.telegram.org/bot'+Cypress.env("BOT")+'/sendMessage',
+        //     form: true,
+        //     body: {
+        //         chat_id: Cypress.env("CHAT_ID"),
+        //         text: `Hola, el producto esta en estado: ${availability}`
+        //     }
+        // }).then((response) => {
+        //     expect(response.status).to.eq(200);
+        //     expect(response.body.ok).to.eq(true);
+        // }
+        // );
     });
 });
