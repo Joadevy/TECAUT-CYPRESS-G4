@@ -23,8 +23,6 @@ jobs:
         run: npm install
 
       - name: Run Cypress test
-        env:
-          URL: ${{ secrets.URL }}
-          BOT: ${{ secrets.BOT }}
-          CHAT_ID: ${{ secrets.CHAT_ID }}
-        run: npx cypress run --spec "cypress/e2e/PROYECTO-RPA/rpa.cy.js"
+        run: |
+          npx cypress run --spec "cypress/e2e/PROYECTO-RPA/rpa.cy.js" \
+            --env url=${{ secrets.URL }},BOT=${{ secrets.BOT }},CHAT_ID=${{ secrets.CHAT_ID }}
