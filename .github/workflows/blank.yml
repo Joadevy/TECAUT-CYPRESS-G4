@@ -1,0 +1,28 @@
+# .github/workflows/cypress_test.yml
+name: Cypress
+
+on:
+  schedule:
+    # Ejecuta cada 5 minutos
+    - cron: "*/5 * * * *"
+
+jobs:
+  cypress-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Cypress test
+        run: |
+          npx cypress run --spec "cypress/e2e/PROYECTO-RPA/rpa.cy.js" \
+            --env url=${{ secrets.URL }},BOT=${{ secrets.BOT }},CHAT_ID=${{ secrets.CHAT_ID }},SUPABASE_CONNECTION_STRING=${{ secrets.SUPABASE_CONNECTION_STRING }}
