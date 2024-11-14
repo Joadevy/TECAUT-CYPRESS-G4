@@ -3,8 +3,8 @@ name: Cypress Test
 
 on:
   schedule:
-    # Ejecuta cada 10 minutos
-    - cron: "*/10 * * * *"
+    # Ejecuta cada 1 minutos
+    - cron: "*/1 * * * *"
 
 jobs:
   cypress-test:
