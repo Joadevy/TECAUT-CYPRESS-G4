@@ -25,4 +25,4 @@ jobs:
       - name: Run Cypress test
         run: |
           npx cypress run --spec "cypress/e2e/PROYECTO-RPA/rpa.cy.js" \
-            --env url=${{ secrets.URL }},BOT=${{ secrets.BOT }},CHAT_ID=${{ secrets.CHAT_ID }}
+            --env url=${{ secrets.URL }},BOT=${{ secrets.BOT }},CHAT_ID=${{ secrets.CHAT_ID }},SUPABASE_CONNECTION_STRING=${{ secrets.SUPABASE_CONNECTION_STRING }}

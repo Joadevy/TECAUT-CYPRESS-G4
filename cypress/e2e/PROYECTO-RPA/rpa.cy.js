@@ -9,9 +9,14 @@ const URL = Cypress.env("url");
 context('Acciones', () => {
     it("Visitar pagina", ()=>
         {
-        cy.readFile('cypress/e2e/PROYECTO-RPA/datos.json').then((data) => {
-            lastPriceQuery = data.lastPrice;
-            lastDateQuery = data.date;
+        cy.task("fetchLogs").then((lastLog) => {
+            if (lastLog) {
+                lastPriceQuery = lastLog.last_price;
+                lastDateQuery = lastLog.created_at;
+                cy.log(`Último precio: ${lastLog.last_price}, Fecha: ${lastLog.created_at}`);
+            } else {
+                cy.log("No se encontraron registros en la base de datos");
+            }
         });
         
         cy.visit(URL);
@@ -31,9 +36,13 @@ context('Acciones', () => {
             .then((text) => {
                 const numericPrice = parseInt(text.trim().replace(/[^0-9]/g, ''), 10);
                 actualPrice = numericPrice;
-                const date = new Date();
-                const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-                cy.writeFile('cypress/e2e/PROYECTO-RPA/datos.json', { lastPrice: numericPrice, availability: availability, url: URL, date: formattedDate });
+                  cy.task("insertLog", {
+                    lastPrice: numericPrice,
+                    availability: availability,
+                    url: URL,
+                }).then((result) => {
+                    cy.log(result); // Mensaje de confirmación
+                });
             });
 
     });
